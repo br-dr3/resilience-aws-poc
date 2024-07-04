@@ -1,0 +1,11 @@
+services:
+  aws_context:
+    container_name: localstack-aws-context
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"
+    environment:
+      - DEBUG=0
+    volumes:
+      - "./resources/:/etc/localstack/init/ready.d/resources"
+      - "./localstack_init.sh:/etc/localstack/init/ready.d/localstack_init.sh"
