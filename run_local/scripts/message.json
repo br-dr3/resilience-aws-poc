@@ -1,0 +1,7 @@
+{
+  "QueueUrl": "http://sqs.sa-east-1.localhost.localstack.cloud:4566/000000000000/resilience-queue",
+  "MessageBody": "test",
+  "DelaySeconds": 0,
+  "MessageAttributes": { },
+  "MessageSystemAttributes": { }
+}
