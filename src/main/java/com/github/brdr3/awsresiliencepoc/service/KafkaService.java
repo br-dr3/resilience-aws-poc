@@ -32,9 +32,4 @@ public class KafkaService {
         System.out.println("Erro ao produzir mensagem para o kafka");
         System.out.println(throwable.getMessage());
     }
-
-    private void handleSuccess() {
-        System.out.println("Mensagem produzida com sucesso");
-    }
-
 }
