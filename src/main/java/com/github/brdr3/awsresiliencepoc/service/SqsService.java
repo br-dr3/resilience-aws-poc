@@ -20,12 +20,4 @@ public class SqsService {
     @Value("${sqs.queue-name}")
     private final String queueName;
 
-//    @PostConstruct
-//    public void init() {
-//        System.out.println("Enviando mensagem");
-//
-//        Message<String> message = MessageBuilder.withPayload("oi").build();
-//
-//        queueMessagingTemplate.convertAndSend(queueName, message);
-//    }
 }
