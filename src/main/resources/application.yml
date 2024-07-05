@@ -1,0 +1,8 @@
+aws:
+    access-key: test
+    secret-key: test
+    region: sa-east-1
+    endpoint: http://localhost:4566
+
+sqs:
+    queue-name: resilience-queue
