@@ -1,0 +1,9 @@
+{
+  "QueueName": "resilience-queue-error",
+  "Attributes": {
+    "MaximumMessageSize": "262144",
+    "MessageRetentionPeriod": "1209600",
+    "VisibilityTimeout": "300",
+    "DelaySeconds": "0"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "QueueName": "resilience-queue",
+  "Attributes": {
+    "MaximumMessageSize": "262144",
+    "MessageRetentionPeriod": "1209600",
+    "VisibilityTimeout": "300",
+    "DelaySeconds": "0",
+    "RedrivePolicy": "{\"deadLetterTargetArn\": \"arn:aws:sqs:sa-east-1:000000000000:resilience-queue-dlq\", \"maxReceiveCount\": \"3\"}"
+  }
+}

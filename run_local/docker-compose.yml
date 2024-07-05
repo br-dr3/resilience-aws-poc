@@ -1,11 +1,22 @@
 services:
   aws_context:
     container_name: localstack-aws-context
-    image: localstack/localstack
+    image: localstack/localstack:stable
     ports:
       - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4510-4559:4510-4559"
     environment:
-      - DEBUG=0
+      - DEBUG=${DEBUG:-0}
+      - AWS_DEFAULT_REGION=sa-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
     volumes:
-      - "./resources/:/etc/localstack/init/ready.d/resources"
-      - "./localstack_init.sh:/etc/localstack/init/ready.d/localstack_init.sh"
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./localstack/:/etc/localstack/init/ready.d"
+    networks:
+      - automation
+
+networks:
+  automation:
+    name: automation
