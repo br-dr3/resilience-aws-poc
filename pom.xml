@@ -21,7 +21,7 @@
         <java.version>17</java.version>
         <spring-cloud.version>2021.0.5</spring-cloud.version>
         <spring.cloud-aws>2.4.2</spring.cloud-aws>
-        <logs.path>./logs</logs.path>
+        <logback.contrib.version>0.1.5</logback.contrib.version>
     </properties>
 
     <dependencies>
@@ -29,6 +29,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter</artifactId>
@@ -60,6 +61,12 @@
         <dependency>
             <groupId>io.awspring.cloud</groupId>
             <artifactId>spring-cloud-starter-aws-messaging</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>7.3</version>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,7 @@
 package com.github.brdr3.awsresiliencepoc.configuration;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -19,15 +20,16 @@ import java.util.Map;
 @Getter
 @EnableAsync
 @Configuration
+@RequiredArgsConstructor
 public class KafkaConfiguration {
 
     private static final short REPLICATION_FACTOR = 1;
 
     @Value("${kafka.bootstrap-servers}")
-    private String bootstrapServers;
+    private final String bootstrapServers;
 
     @Value("${kafka.topic-name}")
-    private String topicName;
+    private final String topicName;
 
     @Bean
     public KafkaAdmin kafkaAdmin() {

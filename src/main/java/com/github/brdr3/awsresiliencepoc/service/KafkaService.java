@@ -1,6 +1,7 @@
 package com.github.brdr3.awsresiliencepoc.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -9,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KafkaService {
@@ -19,17 +23,17 @@ public class KafkaService {
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     public void sendMessage(final String message) {
-        ProducerRecord<String, String> topicMessage = new ProducerRecord<>(topicName, message);
+        final ProducerRecord<String, String> topicMessage = new ProducerRecord<>(topicName, message);
         kafkaTemplate.send(topicMessage)
                 .addCallback(this::handleSuccess, this::handleError);
     }
 
-    private void handleSuccess(SendResult<String, String> stringStringSendResult) {
-        System.out.println("Mensagem enviada com sucesso");
+    private void handleSuccess(SendResult<String, String> result) {
+        final String message = Optional.ofNullable(result).map(SendResult::getProducerRecord).map(ProducerRecord::value).orElse("");
+        log.info("Message sent successfully", kv("messageSent", message));
     }
 
     private void handleError(final Throwable throwable) {
-        System.out.println("Erro ao produzir mensagem para o kafka");
-        System.out.println(throwable.getMessage());
+        log.info("Error trying to produce message to kafka", kv("error", throwable));
     }
 }
