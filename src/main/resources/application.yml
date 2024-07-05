@@ -6,3 +6,7 @@ aws:
 
 sqs:
     queue-name: resilience-queue
+
+kafka:
+    bootstrap-servers: localhost:9092
+    topic-name: resilience
