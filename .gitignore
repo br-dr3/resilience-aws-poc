@@ -2,3 +2,5 @@
 target/
 volume/
 run_local/scripts/message-batch.json
+
+*.iml

@@ -1,4 +1,4 @@
-package com.github.brdr3.awsresiliencepoc.configuration;
+package com.github.brdr3.awsresiliencepoc.configuration.kafka;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -5,7 +5,10 @@ aws:
     endpoint: http://localhost:4566
 
 sqs:
-    queue-name: resilience-queue
+    resilience:
+        queue-name: resilience-queue
+    resilience-dlq:
+        queue-name: resilience-queue-dlq
 
 kafka:
     bootstrap-servers: localhost:9092
