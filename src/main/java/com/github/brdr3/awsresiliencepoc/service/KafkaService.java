@@ -3,12 +3,16 @@ package com.github.brdr3.awsresiliencepoc.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.concurrent.ListenableFuture;
 
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static net.logstash.logback.argument.StructuredArguments.kv;
 
@@ -20,17 +24,38 @@ public class KafkaService {
     @Value("${kafka.topic-name}")
     private final String topicName;
 
+    @Value("${kafka.send.error-rate}")
+    private final Double errorRate;
+
+    @Qualifier("kafkaTemplate")
     private final KafkaTemplate<String, String> kafkaTemplate;
 
+    @Qualifier("kafkaTemplateWithError")
+    private final KafkaTemplate<String, String> kafkaTemplateWithError;
+
+    @Async
     public void sendMessage(final String message) {
-        final ProducerRecord<String, String> topicMessage = new ProducerRecord<>(topicName, message);
-        kafkaTemplate.send(topicMessage)
-                .addCallback(this::handleSuccess, this::handleError);
+        final Double random = ThreadLocalRandom.current().nextDouble(0, 1);
+
+        if(random.compareTo(errorRate) > 0) {
+            log.info(String.format("Random value: %s", random), kv("errorRate", errorRate), kv("kafkaTemplate", "rightKafkaTemplate"));
+            final ProducerRecord<String, String> topicMessage = new ProducerRecord<>(topicName, message);
+            kafkaTemplate.send(topicMessage).addCallback(this::handleSuccess, this::handleError);
+        } else {
+            log.info(String.format("Random value: %s", random), kv("errorRate", errorRate), kv("kafkaTemplate", "wrongKafkaTemplate"));
+            final ProducerRecord<String, String> topicMessage = new ProducerRecord<>(topicName, message);
+
+            ListenableFuture<SendResult<String, String>> send = kafkaTemplateWithError.send(topicMessage);
+            send.addCallback(this::handleSuccess, this::handleError);
+            send.cancel(true);
+        }
     }
 
     private void handleSuccess(SendResult<String, String> result) {
-        final String message = Optional.ofNullable(result).map(SendResult::getProducerRecord).map(ProducerRecord::value).orElse("");
-        log.info("Message sent successfully", kv("messageSent", message));
+        final Optional<ProducerRecord<String, String>> producerRecord = Optional.ofNullable(result).map(SendResult::getProducerRecord);
+        final String message = producerRecord.map(ProducerRecord::value).orElse("");
+        final String topic = producerRecord.map(ProducerRecord::topic).orElse("");
+        log.info("Message sent successfully", kv("messageSent", message), kv("topic", topic));
     }
 
     private void handleError(final Throwable throwable) {

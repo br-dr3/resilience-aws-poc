@@ -6,6 +6,7 @@ import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +42,7 @@ public class KafkaConfiguration {
         return new NewTopic(topicName, 1, REPLICATION_FACTOR);
     }
 
-    @Bean
+    @Bean("producerFactory")
     public ProducerFactory<String, String> producerFactory() {
         final Map<String, Object> properties = Map.ofEntries(
                 Map.entry(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers),
@@ -51,8 +52,23 @@ public class KafkaConfiguration {
         return new DefaultKafkaProducerFactory<>(properties);
     }
 
-    @Bean
-    public KafkaTemplate<String, String> kafkaTemplate(final ProducerFactory<String, String> producerFactory) {
+    @Bean("producerFactoryWithError")
+    public ProducerFactory<String, String> producerFactoryWithError() {
+        final Map<String, Object> properties = Map.ofEntries(
+                Map.entry(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers),
+                Map.entry(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class),
+                Map.entry(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class));
+
+        return new DefaultKafkaProducerFactory<>(properties);
+    }
+
+    @Bean("kafkaTemplate")
+    public KafkaTemplate<String, String> kafkaTemplate(@Qualifier("producerFactory") final ProducerFactory<String, String> producerFactory) {
+        return new KafkaTemplate<>(producerFactory);
+    }
+
+    @Bean("kafkaTemplateWithError")
+    public KafkaTemplate<String, String> kafkaTemplateWithError(@Qualifier("producerFactoryWithError") final ProducerFactory<String, String> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 }
