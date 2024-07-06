@@ -46,6 +46,27 @@ services:
     networks:
       - automation
 
+  db:
+    container_name: mysql
+    image: mysql/mysql-server:latest
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      MYSQL_DATABASE: resilience-db
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+    ports:
+      - '3306:3306'
+    volumes:
+      - db:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  db:
+    driver: local
 
 networks:
   automation:
