@@ -21,6 +21,8 @@ import static net.logstash.logback.argument.StructuredArguments.kv;
 @RequiredArgsConstructor
 public class KafkaService {
 
+    private final ResilienceDlqQueueProducer queueProducer;
+
     @Value("${kafka.topic-name}")
     private final String topicName;
 
@@ -40,13 +42,13 @@ public class KafkaService {
         if(random.compareTo(errorRate) > 0) {
             log.info(String.format("Random value: %s", random), kv("errorRate", errorRate), kv("kafkaTemplate", "rightKafkaTemplate"));
             final ProducerRecord<String, String> topicMessage = new ProducerRecord<>(topicName, message);
-            kafkaTemplate.send(topicMessage).addCallback(this::handleSuccess, this::handleError);
+            kafkaTemplate.send(topicMessage).addCallback(this::handleSuccess, t -> handleError(t, message));
         } else {
             log.info(String.format("Random value: %s", random), kv("errorRate", errorRate), kv("kafkaTemplate", "wrongKafkaTemplate"));
             final ProducerRecord<String, String> topicMessage = new ProducerRecord<>(topicName, message);
 
             ListenableFuture<SendResult<String, String>> send = kafkaTemplateWithError.send(topicMessage);
-            send.addCallback(this::handleSuccess, this::handleError);
+            send.addCallback(this::handleSuccess, t -> handleError(t, message));
             send.cancel(true);
         }
     }
@@ -58,7 +60,8 @@ public class KafkaService {
         log.info("Message sent successfully", kv("messageSent", message), kv("topic", topic));
     }
 
-    private void handleError(final Throwable throwable) {
-        log.info("Error trying to produce message to kafka", kv("error", throwable));
+    private void handleError(final Throwable throwable, final String message) {
+        log.info("Error trying to produce message to kafka. Sending to sqs dlq queue", kv("error", throwable.getMessage()), kv("message", message));
+        queueProducer.produceMessage(message);
     }
 }

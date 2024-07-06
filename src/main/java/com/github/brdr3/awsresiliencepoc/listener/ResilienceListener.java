@@ -17,7 +17,7 @@ public class ResilienceListener {
 
     private final KafkaService kafkaService;
 
-    @SqsListener(value = "${sqs.queue-name}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
+    @SqsListener(value = "${sqs.resilience.queue-name}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
     public void handle(final Message<String> message) {
         log.info("Message received", kv("message", message));
         kafkaService.sendMessage(message.getPayload());

@@ -1,4 +1,4 @@
-package com.github.brdr3.awsresiliencepoc.configuration;
+package com.github.brdr3.awsresiliencepoc.configuration.sqs;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -8,11 +8,13 @@ import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 @Configuration
+@EnableConfigurationProperties(SqsProperties.class)
 public class SqsConfiguration {
     @Value("${aws.access-key}")
     private String accessKey;
@@ -43,7 +45,7 @@ public class SqsConfiguration {
 
     @Bean
     @Primary
-    public QueueMessagingTemplate queueMessagingTemplate(AmazonSQSAsync amazonSQSAsync) {
+    public QueueMessagingTemplate queueMessagingTemplate(final AmazonSQSAsync amazonSQSAsync) {
         return new QueueMessagingTemplate(amazonSQSAsync);
     }
 }
