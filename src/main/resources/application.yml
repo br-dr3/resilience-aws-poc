@@ -10,3 +10,5 @@ sqs:
 kafka:
     bootstrap-servers: localhost:9092
     topic-name: resilience
+    send:
+        error-rate: 0.2
