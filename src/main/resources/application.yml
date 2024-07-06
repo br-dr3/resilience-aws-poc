@@ -1,3 +1,12 @@
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+    endpoint:
+        health:
+            show-details: always
+
 aws:
     access-key: test
     secret-key: test
@@ -15,3 +24,11 @@ kafka:
     topic-name: resilience
     send:
         error-rate: 0.2
+
+resilience4j:
+    retry:
+        instances:
+            retry-dlq-producer:
+                max-attempts: 2
+        metrics:
+            enabled: true
