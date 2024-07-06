@@ -1,10 +1,10 @@
 package com.github.brdr3.awsresiliencepoc.service;
 
+import com.github.brdr3.awsresiliencepoc.configuration.kafka.KafkaProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.scheduling.annotation.Async;
@@ -22,12 +22,7 @@ import static net.logstash.logback.argument.StructuredArguments.kv;
 public class KafkaService {
 
     private final ResilienceDlqQueueProducer queueProducer;
-
-    @Value("${kafka.topic-name}")
-    private final String topicName;
-
-    @Value("${kafka.send.error-rate}")
-    private final Double errorRate;
+    private final KafkaProperties kafkaProperties;
 
     @Qualifier("kafkaTemplate")
     private final KafkaTemplate<String, String> kafkaTemplate;
@@ -37,6 +32,8 @@ public class KafkaService {
 
     @Async
     public void sendMessage(final String message) {
+        final String topicName = kafkaProperties.getTopicName();
+        final Double errorRate = kafkaProperties.getSend().getErrorRate();
         final Double random = ThreadLocalRandom.current().nextDouble(0, 1);
 
         if(random.compareTo(errorRate) > 0) {
