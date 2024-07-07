@@ -32,3 +32,18 @@ resilience4j:
                 max-attempts: 2
         metrics:
             enabled: true
+
+spring:
+    jpa:
+        properties:
+            hibernate:
+                format_sql:
+                    dialect: org.hibernate.dialect.MySQLDialect
+        show-sql: true
+    flyway:
+        enabled: true
+        baseline-on-migrate: true
+    datasource:
+        url: jdbc:mysql://localhost:3306/resilience-db
+        username: user
+        password: pass

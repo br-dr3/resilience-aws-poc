@@ -7,7 +7,7 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -22,30 +22,25 @@ import java.util.Map;
 @EnableAsync
 @Configuration
 @RequiredArgsConstructor
+@EnableConfigurationProperties(KafkaProperties.class)
 public class KafkaConfiguration {
 
     private static final short REPLICATION_FACTOR = 1;
 
-    @Value("${kafka.bootstrap-servers}")
-    private final String bootstrapServers;
-
-    @Value("${kafka.topic-name}")
-    private final String topicName;
-
     @Bean
-    public KafkaAdmin kafkaAdmin() {
-        return new KafkaAdmin(Map.of(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers));
+    public KafkaAdmin kafkaAdmin(final KafkaProperties kafkaProperties) {
+        return new KafkaAdmin(Map.of(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers()));
     }
 
     @Bean
-    public NewTopic topic() {
-        return new NewTopic(topicName, 1, REPLICATION_FACTOR);
+    public NewTopic topic(final KafkaProperties kafkaProperties) {
+        return new NewTopic(kafkaProperties.getTopicName(), 1, REPLICATION_FACTOR);
     }
 
     @Bean("producerFactory")
-    public ProducerFactory<String, String> producerFactory() {
+    public ProducerFactory<String, String> producerFactory(final KafkaProperties kafkaProperties) {
         final Map<String, Object> properties = Map.ofEntries(
-                Map.entry(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers),
+                Map.entry(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers()),
                 Map.entry(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class),
                 Map.entry(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class));
 
@@ -53,9 +48,9 @@ public class KafkaConfiguration {
     }
 
     @Bean("producerFactoryWithError")
-    public ProducerFactory<String, String> producerFactoryWithError() {
+    public ProducerFactory<String, String> producerFactoryWithError(final KafkaProperties kafkaProperties) {
         final Map<String, Object> properties = Map.ofEntries(
-                Map.entry(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers),
+                Map.entry(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers()),
                 Map.entry(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class),
                 Map.entry(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class));
 
