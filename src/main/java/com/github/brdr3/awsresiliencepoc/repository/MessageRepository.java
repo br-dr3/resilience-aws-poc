@@ -6,7 +6,6 @@ import com.github.brdr3.awsresiliencepoc.entity.KafkaProductionHistoryEntity;
 import com.github.brdr3.awsresiliencepoc.entity.ReceivedSqsEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

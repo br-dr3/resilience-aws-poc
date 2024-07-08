@@ -16,8 +16,8 @@ aws:
 sqs:
     resilience:
         queue-name: resilience-queue
-    resilience-dlq:
-        queue-name: resilience-queue-dlq
+    replay-dlq:
+        queue-name: replay-queue-dlq
 
 kafka:
     bootstrap-servers: localhost:9092

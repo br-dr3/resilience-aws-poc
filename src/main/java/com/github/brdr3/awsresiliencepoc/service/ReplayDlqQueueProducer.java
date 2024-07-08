@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ResilienceDlqQueueProducer  {
+public class ReplayDlqQueueProducer {
 
     private final SqsProperties properties;
     private final QueueMessagingTemplate queueMessagingTemplate;
@@ -18,6 +18,6 @@ public class ResilienceDlqQueueProducer  {
     @Retry(name = "retry-dlq-producer")
     public void produceMessage(final String messageText) {
         final Message<String> message = MessageBuilder.withPayload(messageText).build();
-        queueMessagingTemplate.send(properties.getResilienceDlq().getQueueName(), message);
+        queueMessagingTemplate.send(properties.getReplayDlq().getQueueName(), message);
     }
 }

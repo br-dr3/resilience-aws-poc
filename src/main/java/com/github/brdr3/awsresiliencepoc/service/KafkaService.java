@@ -25,7 +25,7 @@ import static net.logstash.logback.argument.StructuredArguments.kv;
 @RequiredArgsConstructor
 public class KafkaService {
 
-    private final ResilienceDlqQueueProducer queueProducer;
+    private final ReplayDlqQueueProducer queueProducer;
     private final KafkaProperties kafkaProperties;
     private final MessageRepository repository;
 
