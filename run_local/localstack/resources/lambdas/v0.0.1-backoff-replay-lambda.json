@@ -1,0 +1,13 @@
+{
+  "FunctionName": "backoff-replay",
+  "Runtime": "python3.12",
+  "Role": "arn:aws:iam::000000000000:role/lambda-role ",
+  "Handler": "lambda_handler.handler",
+  "Description": "Backoff to replay-dlq back to replay main queue",
+  "PackageType": "Zip",
+  "Environment": {
+    "Variables": {
+      "KeyName": ""
+    }
+  }
+}
