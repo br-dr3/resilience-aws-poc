@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SqsProperties {
 
     private final QueueProperty resilience = new QueueProperty();
-    private final QueueProperty resilienceDlq = new QueueProperty();
+    private final QueueProperty replayDlq = new QueueProperty();
 
     @Getter
     @Setter
