@@ -1,0 +1,6 @@
+{
+  "EventSourceArn": "arn:aws:sqs:sa-east-1:000000000000:replay-queue-dlq",
+  "FunctionName": "backoff-replay",
+  "Enabled": true,
+  "BatchSize": 10
+}
